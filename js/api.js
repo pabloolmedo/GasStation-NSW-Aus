@@ -23,7 +23,7 @@ export class API {
         const req = new Request(uri, {
             method: 'GET',
             headers: header,
-            mode: 'no-cors'
+            mode: 'cors'
         });
         const getBearerToken = await fetch(req);
         const responseJSON = await getBearerToken.json();
