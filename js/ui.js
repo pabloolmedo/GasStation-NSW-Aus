@@ -1,4 +1,6 @@
-import { API } from './api.js';
+import {
+    API
+} from './api.js';
 
 export class UI {
     constructor() {
@@ -27,7 +29,9 @@ export class UI {
                 //show the markers
                 this.showMarkers(stations);
             })
-            .catch(error => console.log(error));
+            .catch(error => {
+                console.log(error)
+            });
     }
 
     showMarkers(stations) {
@@ -42,7 +46,7 @@ export class UI {
             } = station;
             //build popup
             const optionsPopup = L.popup()
-            .setContent(`
+                .setContent(`
                 <p><b>Address</b>: ${address}</p>
                 <p>Brand: ${brand}</p>
             `);
@@ -58,18 +62,22 @@ export class UI {
         this.markers.addTo(this.map);
     }
 
-    getSuggestions(search){
+    getSuggestions(search) {
         this.api.getFuelStation()
-        .then(data =>{
-            const results = data.responseJSON.stations;
-            //filter
-            this.filterSuggestion(results, search);
-        })
+            .then(data => {
+                const results = data.responseJSON.stations;
+                //filter
+                this.filterSuggestion(results, search);
+            })
     }
 
-    filterSuggestion(results, search){
+    filterSuggestion(results, search) {
         const filter = results.filter(filter => filter.brand.indexOf(search) !== -1);
         //show markers
         this.showMarkers(filter);
+    }
+
+    mergeStationsPrices(arr1, arr2) {
+
     }
 }
