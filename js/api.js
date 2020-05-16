@@ -27,13 +27,14 @@ export class API {
         });
         const getBearerToken = await fetch(req);
         const responseJSON = await getBearerToken.json();
+        
         return {
             responseJSON
         }
     }
 
     async getFuelStation() {
-        let data = this.getToken_Id_Timestamp()
+        let data = await this.getToken_Id_Timestamp()
             .then(data => {
                 const token = data.responseJSON.access_token;
                 const transactionid = data.responseJSON.application_name;
@@ -46,32 +47,39 @@ export class API {
                 }
 
             })
-            .catch(error => console.log(error));
+            .catch(error => {
+                console.log(error)
+            });
 
         const uri = 'https://api.onegov.nsw.gov.au/FuelPriceCheck/v1/fuel/prices';
         let header = new Headers();
         header.append('apikey', 'K4ghiRBkmkred1f85YZTs1apYGRQQqnY');
-        header.append('transactionid', (await data).transactionid);
-        header.append('requesttimestamp', (await data).dateUTC);
+        header.append('transactionid', data.transactionid);
+        header.append('requesttimestamp', data.dateUTC);
         header.append('Content-Type', 'application/json');
-        header.append('Authorization', 'Bearer' + ' ' + (await data).token);
+        header.append('Authorization', 'Bearer' + ' ' + data.token);
 
         let req = new Request(uri, {
             method: 'GET',
             headers: header,
-            mode: 'cors'
+            mode: 'cors',
         });
+
         const gasStations = await fetch(req);
         const responseJSON = await gasStations.json();
+
+        
+
         return {
             responseJSON
         }
     }
 
     unixTimestampToDate(timestamp) {
-        let date = new Date(timestamp * 1).toLocaleDateString();
+        let date = new Date(timestamp * 1).toLocaleDateString('en-GB');
         let time = new Date(timestamp * 1).toLocaleTimeString();
-        let dateUTC = date + ' ' + time;
+        let dateUTC = date + ' ' + time; 
+        
         return dateUTC;
     }
 }
