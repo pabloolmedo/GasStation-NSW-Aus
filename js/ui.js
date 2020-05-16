@@ -77,7 +77,7 @@ export class UI {
         this.showMarkers(filter);
     }
 
-    mergeStationsPrices(arr1, arr2) {
+    // mergeStationsPrices(arr1, arr2) {
 
-    }
+    // }
 }
