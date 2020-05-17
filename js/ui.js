@@ -88,7 +88,7 @@ export class UI {
                 const stations = data.responseJSON.stations;
                 const prices = data.responseJSON.prices;
                 const allPrices = this.mergePricesObjectsByKey(prices);
-                let stations_prices = this.mergeStationsPrices(stations, all);
+                let stations_prices = this.mergeStationsPrices(stations, allPrices);
                 //filter
                 this.filterSuggestion(stations_prices, search);
             })
@@ -96,7 +96,7 @@ export class UI {
     }
 
     filterSuggestion(stations, search) {
-        const filter = stations.filter(filter => filter.brand.indexOf(search) !== -1);
+        const filter = stations.filter(filter => filter.brand.indexOf(search) !== -1 || filter.address.indexOf(search) !== -1);
         //show markers
         this.showMarkers(filter);
     }
