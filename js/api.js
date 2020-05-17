@@ -66,9 +66,7 @@ export class API {
         });
 
         const gasStations = await fetch(req);
-        const responseJSON = await gasStations.json();
-
-        
+        const responseJSON = await gasStations.json();              
 
         return {
             responseJSON

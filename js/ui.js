@@ -26,8 +26,10 @@ export class UI {
         this.api.getFuelStation()
             .then(data => {
                 const stations = data.responseJSON.stations;
-                //show the markers
-                this.showMarkers(stations);
+                const prices = data.responseJSON.prices;
+                const allPrices = this.mergePricesObjectsByKey(prices);
+                let stations_prices = this.mergeStationsPrices(stations, allPrices);
+                this.showMarkers(stations_prices);
             })
             .catch(error => {
                 console.log(error)
@@ -42,14 +44,32 @@ export class UI {
             const {
                 location,
                 address,
-                brand
+                brand,
+                fueltype,
+                price
             } = station;
+
+
             //build popup
             const optionsPopup = L.popup()
-                .setContent(`
-                <p><b>Address</b>: ${address}</p>
-                <p>Brand: ${brand}</p>
-            `);
+                .setContent(
+                    `
+                    <p><b>Brand:</b> ${brand}</p>
+                    <p><b>Address:</b> ${address}</p> 
+                    <p>
+                        <table>
+                            <tr>
+                                <th>Fuel types</th>                          
+                                <th>Prices</th>
+                            </tr>
+                            <tr>
+                                <td>${fueltype.map(type =>`<b>${type}</b><br>`).join('')}</td>                        
+                                <td>${price.map(ausPrice =>`$${ausPrice}<br>`).join('')}</td>                     
+                            </tr>
+                        </table>                    
+                    </p>
+                `
+                );
             //add marker
             const marker = new L.marker([
                 parseFloat(location.latitude),
@@ -65,19 +85,47 @@ export class UI {
     getSuggestions(search) {
         this.api.getFuelStation()
             .then(data => {
-                const results = data.responseJSON.stations;
+                const stations = data.responseJSON.stations;
+                const prices = data.responseJSON.prices;
+                const allPrices = this.mergePricesObjectsByKey(prices);
+                let stations_prices = this.mergeStationsPrices(stations, all);
                 //filter
-                this.filterSuggestion(results, search);
+                this.filterSuggestion(stations_prices, search);
             })
+            .catch(error => console.log(error));
     }
 
-    filterSuggestion(results, search) {
-        const filter = results.filter(filter => filter.brand.indexOf(search) !== -1);
+    filterSuggestion(stations, search) {
+        const filter = stations.filter(filter => filter.brand.indexOf(search) !== -1);
         //show markers
         this.showMarkers(filter);
     }
 
-    // mergeStationsPrices(arr1, arr2) {
+    mergeStationsPrices(arr1, arr2) {
+        //combine arr1 and arr2
+        return arr1.map((item, i) => Object.assign({}, item, arr2[i]));
+    }
 
-    // }
+    mergePricesObjectsByKey(array) {
+        let prices = [];
+        array.forEach(item => {
+            //filter by key stationcode
+            let existing = prices.filter((v, i) => {
+
+                return v.stationcode == item.stationcode;
+            });
+            if (existing.length) {
+                let existingIndex = prices.indexOf(existing[0]);
+                prices[existingIndex].fueltype = prices[existingIndex].fueltype.concat(item.fueltype);
+                prices[existingIndex].price = prices[existingIndex].price.concat(item.price);
+            } else {
+                if (typeof item.fueltype == 'string' && typeof item.price !== 'string')
+                    item.fueltype = [item.fueltype];
+                item.price = [item.price]
+                prices.push(item);
+            }
+        });
+
+        return prices;
+    }
 }
