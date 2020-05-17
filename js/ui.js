@@ -110,9 +110,9 @@ export class UI {
         let prices = [];
         array.forEach(item => {
             //filter by key stationcode
-            let existing = prices.filter((v, i) => {
+            let existing = prices.filter(price => {
 
-                return v.stationcode == item.stationcode;
+                return price.stationcode == item.stationcode;
             });
             if (existing.length) {
                 let existingIndex = prices.indexOf(existing[0]);
