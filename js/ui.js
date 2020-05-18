@@ -64,7 +64,7 @@ export class UI {
                             </tr>
                             <tr>
                                 <td>${fueltype.map(type =>`<b>${type}</b><br>`).join('')}</td>                        
-                                <td>${price.map(ausPrice =>`$${ausPrice}<br>`).join('')}</td>                     
+                                <td>${price.map(ausPrice =>`A$${ausPrice}<br>`).join('')}</td>                     
                             </tr>
                         </table>                    
                     </p>
